@@ -1,5 +1,4 @@
 import { renderAsync } from '@react-email/components'
-import { type ReactElement } from 'react'
 import { z } from 'zod'
 
 const resendErrorSchema = z.union([
@@ -21,16 +20,14 @@ const resendSuccessSchema = z.object({
 	id: z.string(),
 })
 
-export async function sendEmail({
-	react,
-	...options
-}: {
+type SendEmailProps = {
 	to: string
 	subject: string
 } & (
 	| { html: string; text: string; react?: never }
-	| { react: ReactElement; html?: never; text?: never }
-)) {
+	| { react: React.ReactElement; html?: never; text?: never }
+)
+export async function sendEmail({ react, ...options }: SendEmailProps) {
 	const from = 'apl@sabhapei.com'
 
 	const email = {
@@ -89,7 +86,20 @@ export async function sendEmail({
 	}
 }
 
-async function renderReactEmail(react: ReactElement) {
+export async function retryEmail({
+	retries = 0,
+	...options
+}: SendEmailProps & { retries?: number }) {
+	const MAX_RETRIES = 3
+	try {
+		return await sendEmail({ ...options })
+	} catch (e) {
+		if (retries > MAX_RETRIES) throw e
+		return retryEmail({ ...options, retries: retries + 1 })
+	}
+}
+
+async function renderReactEmail(react: React.ReactElement) {
 	const [html, text] = await Promise.all([
 		renderAsync(react),
 		renderAsync(react, { plainText: true }),

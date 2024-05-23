@@ -1,6 +1,8 @@
+import * as E from '@react-email/components'
 import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '../../utils/db.server'
+import { retryEmail } from '../../utils/email.server'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url)
@@ -24,6 +26,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	if (!player) throw redirect('/registration')
 
+	await retryEmail({
+		to: player.email,
+		subject: `APL PEI 2024 - Registration Confirmation`,
+		react: (
+			<ConfirmationEmail firstName={player.firstName} confNumber={player.id} />
+		),
+	})
+
 	return { player }
 }
 
@@ -41,8 +51,48 @@ export default function ThankYou() {
 				number is <b>{player.id}</b>.
 			</p>
 			<p className="text-lg sm:text-xl md:text-2xl lg:text-3xl">
-				An email has been sent to <b>{player.email}</b> with more information.
+				An email will be sent to <b>{player.email}</b> with more information.
 			</p>
 		</div>
+	)
+}
+
+function ConfirmationEmail({
+	firstName,
+	confNumber,
+}: {
+	firstName: string
+	confNumber: string
+}) {
+	return (
+		<E.Html lang="en" dir="ltr">
+			<E.Container>
+				<h1>
+					<E.Text>
+						Your APL PEI 2024 registration is complete, {firstName}!
+					</E.Text>
+				</h1>
+				<p>
+					<E.Text>
+						Here's your confirmation number: <strong>{confNumber}</strong>
+					</E.Text>
+				</p>
+				<p>
+					<E.Text>
+						APL Auction is on <strong>Saturday, June 15</strong> and will be
+						played on <strong>Saturday, June 29</strong> and{' '}
+						<strong>Sunday, June 30</strong>. Please make sure you're available
+						on those dates.
+					</E.Text>
+				</p>
+				<p>
+					<E.Text>
+						Das na Das Jay Swaminarayan! Thank you for registering! We look
+						forward to seeing your skills on the field and making this season
+						unforgettable.
+					</E.Text>
+				</p>
+			</E.Container>
+		</E.Html>
 	)
 }
