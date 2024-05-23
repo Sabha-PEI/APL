@@ -86,19 +86,6 @@ export async function sendEmail({ react, ...options }: SendEmailProps) {
 	}
 }
 
-export async function retryEmail({
-	retries = 0,
-	...options
-}: SendEmailProps & { retries?: number }) {
-	const MAX_RETRIES = 3
-	try {
-		return await sendEmail({ ...options })
-	} catch (e) {
-		if (retries > MAX_RETRIES) throw e
-		return retryEmail({ ...options, retries: retries + 1 })
-	}
-}
-
 async function renderReactEmail(react: React.ReactElement) {
 	const [html, text] = await Promise.all([
 		renderAsync(react),

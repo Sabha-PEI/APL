@@ -2,7 +2,7 @@ import * as E from '@react-email/components'
 import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '../../utils/db.server'
-import { retryEmail } from '../../utils/email.server'
+import { sendEmail } from '../../utils/email.server'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url)
@@ -26,7 +26,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	if (!player) throw redirect('/registration')
 
-	await retryEmail({
+	await sendEmail({
 		to: player.email,
 		subject: `APL PEI 2024 - Registration Confirmation`,
 		react: (
