@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id    String @id @default(cuid())
+  email String @unique
+
+  type           String
+  firstName      String
+  lastName       String
+  address        String
+  phNo           String
+  dob            DateTime
+  healthCard     Boolean
+  playingRole    String
+  tshirtSize     String
+  batsmanRating  Int
+  handedBatsman  String
+  battingComment String
+  bowlerRating   Int
+  armBowler      String
+  typeBowler     String
+  bowlingComment String
+  fielderRating  Int
+  fielderComment String
+
+  team    Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamId  String? @unique
+  soldFor Int?
+
+  password Password?
+  sessions Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  image   PlayerImage @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  imageId String      @unique
+}
+
+model PlayerImage {
+  id          String  @id @default(cuid())
+  altText     String?
+  contentType String
+  blob        Bytes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  player Player?
+}
+
+model Team {
+  id   String @id @default(cuid())
+  name String @unique
+
+  players Player[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  image   TeamImage @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  imageId String    @unique
+}
+
+model TeamImage {
+  id          String  @id @default(cuid())
+  altText     String?
+  contentType String
+  blob        Bytes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  team Team?
+}
+
+model Password {
+  hash String
+
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  playerId String @unique
+}
+
+model Session {
+  id             String   @id @default(cuid())
+  expirationDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  playerId String
+
+  // non-unique foreign key
+  @@index([playerId])
+}
