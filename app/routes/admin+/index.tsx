@@ -1,17 +1,20 @@
-import { type LoaderFunctionArgs } from '@remix-run/node'
+import { type HeadersFunction, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useLoaderData } from '@remix-run/react'
 import { Button } from '../../components/ui/button'
 import { requirePlayerId } from '../../utils/auth.server'
+import { getIframeSrc } from './index.server'
+
+export const headers: HeadersFunction = () => {
+	const iframeSrc = getIframeSrc()
+	return {
+		'Content-Security-Policy': `frame-src 'self' ${iframeSrc}`,
+	}
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
-	const isProd = process.env.NODE_ENV === 'production'
-	const protocol = isProd ? 'https' : 'http'
-	const domain = isProd ? process.env.DOMAIN : 'localhost'
 
-	const iframeSrc = `${protocol}://${domain}:3690`
-
-	return { iframeSrc }
+	return { iframeSrc: getIframeSrc() }
 }
 
 export default function Index() {
