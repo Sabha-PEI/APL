@@ -423,7 +423,12 @@ export default function Registration() {
 						/>
 					</div>
 				</fieldset>
-				<StatusButton type="submit" status={isSubmitting ? 'pending' : 'idle'}>
+				<StatusButton
+					type="submit"
+					size="lg"
+					status={isSubmitting ? 'pending' : 'idle'}
+					className="mx-auto text-xl"
+				>
 					Pay
 				</StatusButton>
 			</Form>
