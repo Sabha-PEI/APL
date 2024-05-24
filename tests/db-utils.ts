@@ -49,6 +49,10 @@ export function createPlayer() {
 		bowlingComment: faker.lorem.sentence(),
 		fielderRating: faker.number.int({ min: 0, max: 10 }),
 		fielderComment: faker.lorem.sentence(),
+		paid: false,
+		paidAt: faker.date.past({
+			years: 1,
+		}),
 	} satisfies Omit<
 		Player,
 		'id' | 'createdAt' | 'updatedAt' | 'imageId' | 'teamId' | 'soldFor'
