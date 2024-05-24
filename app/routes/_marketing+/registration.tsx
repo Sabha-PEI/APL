@@ -7,8 +7,18 @@ import {
 	getFieldsetProps,
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { json, redirect, type ActionFunctionArgs } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
+import {
+	json,
+	redirect,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
+import {
+	Form,
+	useActionData,
+	useLoaderData,
+	useSearchParams,
+} from '@remix-run/react'
 import { useState } from 'react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
@@ -20,6 +30,7 @@ import {
 	SliderField,
 	TextareaField,
 } from '../../components/forms'
+import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { Icon } from '../../components/ui/icon'
 import { StatusButton } from '../../components/ui/status-button'
 import { createStripeCheckoutSession } from '../../services/stripe/api/create-checkout-session'
@@ -36,12 +47,22 @@ export const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
 
 const ImageFieldsetSchema = z.object({
 	id: z.string().optional(),
-	file: z.instanceof(File).refine(file => {
-		return !file || file.size <= MAX_UPLOAD_SIZE
-	}, `File size must be less than ${MAX_UPLOAD_SIZE}MB`),
+	file: z
+		.instanceof(File, {
+			message: 'Select a file',
+		})
+		.refine(file => {
+			return !file || file.size <= MAX_UPLOAD_SIZE
+		}, `File size must be less than ${MAX_UPLOAD_SIZE}MB`),
 	altText: z.string().optional(),
 })
 type ImageFieldset = z.infer<typeof ImageFieldsetSchema>
+
+export function imageHasFile(
+	image: ImageFieldset,
+): image is ImageFieldset & { file: NonNullable<ImageFieldset['file']> } {
+	return Boolean(image.file?.size && image.file?.size > 0)
+}
 
 const RegistrationFormSchema = z.object({
 	firstName: z
@@ -110,22 +131,70 @@ const RegistrationFormSchema = z.object({
 	image: ImageFieldsetSchema,
 })
 
+export async function loader({ request }: LoaderFunctionArgs) {
+	const url = new URL(request.url)
+	const id = url.searchParams.get('id')
+	const pay = url.searchParams.get('pay')
+	if (id && pay) {
+		const player = await prisma.player.findUnique({
+			where: { id },
+			select: {
+				firstName: true,
+				lastName: true,
+				email: true,
+				phNo: true,
+				healthCard: true,
+				playingRole: true,
+				tshirtSize: true,
+				dob: true,
+				batsmanRating: true,
+				handedBatsman: true,
+				battingComment: true,
+				bowlerRating: true,
+				armBowler: true,
+				typeBowler: true,
+				bowlingComment: true,
+				fielderRating: true,
+				fielderComment: true,
+				address: true,
+				paid: true,
+				image: {
+					select: {
+						id: true,
+					},
+				},
+			},
+		})
+		if (player) {
+			if (player.paid) {
+				return redirect(`/thank-you?id=${id}`)
+			}
+			return { player }
+		}
+	}
+
+	return { player: null }
+}
+
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	checkHoneypot(formData)
 	const submission = await parseWithZod(formData, {
 		async: true,
 		schema: RegistrationFormSchema.superRefine(
-			async ({ email, ...data }, ctx) => {
+			async ({ email, image }, ctx) => {
 				const player = await prisma.player.findUnique({
-					select: { id: true },
+					select: { id: true, paid: true, image: true },
 					where: { email },
 				})
-				if (player) {
+				if (player && player.paid) {
+					throw redirect(`/thank-you?id=${player.id}`)
+				}
+				if (!player && !imageHasFile(image)) {
 					ctx.addIssue({
-						path: ['email'],
+						path: ['image'],
 						code: z.ZodIssueCode.custom,
-						message: 'A player with this email already exists',
+						message: 'Image is required',
 					})
 				}
 			},
@@ -144,10 +213,22 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	const { id } = await prisma.player.create({
+	const { id } = await prisma.player.upsert({
+		where: { email: submission.value.email },
 		select: { id: true },
-		data: {
+		create: {
 			type: 'player',
+			paid: false,
+			...submission.value,
+			image: {
+				create: {
+					blob: Buffer.from(await submission.value.image.file.arrayBuffer()),
+					contentType: submission.value.image.file.type,
+					altText: submission.value.image.altText,
+				},
+			},
+		},
+		update: {
 			...submission.value,
 			image: {
 				create: {
@@ -161,14 +242,18 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const url = await createStripeCheckoutSession(request, {
 		success_url: `${getDomainUrl(request)}/stripe/success?id=${id}`,
+		cancel_url: `${getDomainUrl(request)}/stripe/cancel?id=${id}`,
 	})
 
 	return redirect(url)
 }
 
 export default function Registration() {
+	const loaderData = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsPending()
+	const [searchParams] = useSearchParams()
+	const pay = searchParams.get('pay')
 
 	const [form, fields] = useForm({
 		id: 'registration',
@@ -178,6 +263,13 @@ export default function Registration() {
 			return parseWithZod(formData, { schema: RegistrationFormSchema })
 		},
 		shouldRevalidate: 'onInput',
+		defaultValue: loaderData.player
+			? {
+					...loaderData.player,
+					healthCard: loaderData.player.healthCard ? 'yes' : 'no',
+					dob: new Date(loaderData.player.dob).toISOString().split('T')[0],
+				}
+			: undefined,
 	})
 	if (form.status === 'error') {
 		console.info({
@@ -198,6 +290,16 @@ export default function Registration() {
 				<span className="font-bold underline">Sunday, June 30</span>. Please
 				make sure you're available on those dates before registering.
 			</p>
+			{pay === 'canceled' && (
+				<Alert variant="destructive">
+					<Icon name="exclamation-circle-outline" className="size-4" />
+					<AlertTitle>Payment canceled</AlertTitle>
+					<AlertDescription>
+						Your registration is not complete. Please pay with Stripe to
+						complete your registration.
+					</AlertDescription>
+				</Alert>
+			)}
 			<Form method="POST" {...getFormProps(form)} encType="multipart/form-data">
 				<HoneypotInputs />
 				{form.status === 'error' && (

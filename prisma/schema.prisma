@@ -33,6 +33,9 @@ model Player {
   fielderRating  Int
   fielderComment String
 
+  paid           Boolean @default(false)
+  paidAt         DateTime?
+
   team    Team?   @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   teamId  String? @unique
   soldFor Int?

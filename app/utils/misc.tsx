@@ -6,7 +6,7 @@ import { extendTailwindMerge } from 'tailwind-merge'
 import { extendedTheme } from './extended-theme.ts'
 
 export function getPlayerImgSrc(imageId?: string | null) {
-	return imageId ? `/resources/user-images/${imageId}` : '/img/user.png'
+	return imageId ? `/resources/player-images/${imageId}` : '/img/user.png'
 }
 
 export function getErrorMessage(error: unknown) {
