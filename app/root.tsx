@@ -40,7 +40,7 @@ export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
 		{ rel: 'preload', href: iconsHref, as: 'image' },
-		{ rel: 'preload', href: '/public/img/logo.png', as: 'image' },
+		{ rel: 'preload', href: '/img/logo.png', as: 'image' },
 		// Preload CSS as a resource to avoid render blocking
 		{
 			rel: 'alternate icon',
@@ -228,7 +228,7 @@ function App() {
 function Logo() {
 	return (
 		<Link to="/" className="group flex items-center gap-4">
-			<img src="/public/img/logo.png" alt="APL PEI 2024" className="w-14" />
+			<img src="/img/logo.png" alt="APL PEI 2024" className="w-14" />
 			<span className="grid leading-snug">
 				<span className="font-light transition group-hover:-translate-x-1">
 					APL
