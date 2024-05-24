@@ -1,39 +1,44 @@
 import { type ActionFunctionArgs } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, useLoaderData } from '@remix-run/react'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
-import { sendEmail } from '../../utils/email.server'
+import { prisma } from '../../utils/db.server'
+import { ConfirmationEmail } from './thank-you'
 
-export async function action({ request }: ActionFunctionArgs) {
-	const formData = await request.formData()
-	const email = String(formData.get('email')) || 'zeelmp1990@gmail.com'
+export async function loader({ request }: ActionFunctionArgs) {
+	const url = new URL(request.url)
+	const email = url.searchParams.get('email')
 
-	const response = await sendEmail({
-		to: email,
-		subject: 'APL PEI 2024 - Registration Confirmation',
-		html: '<h1>APL PEI 2024 - Registration Confirmation</h1>',
-		text: 'APL PEI 2024 - Registration Confirmation',
-	})
+	if (email) {
+		const player = await prisma.player.findUnique({
+			where: { email },
+			select: { id: true, firstName: true },
+		})
+		return {
+			player,
+		}
+	}
 
-	return { sent: response.status === 'success' }
+	return { player: null }
 }
 
 export default function TestEmail() {
-	const data = useActionData<typeof action>()
+	const data = useLoaderData<typeof loader>()
 
 	return (
 		<main className="container flex-1">
-			<Form method="POST">
+			<Form method="GET">
 				<Input type="email" name="email" className="max-w-sm" />
 				<Button type="submit" className="mt-4">
 					Send
 				</Button>
 			</Form>
-			{data?.sent && (
-				<div className="mt-4">
-					<p>Sent!</p>
-				</div>
-			)}
+			{data.player ? (
+				<ConfirmationEmail
+					firstName={data.player.firstName}
+					confNumber={data.player.id}
+				/>
+			) : null}
 		</main>
 	)
 }

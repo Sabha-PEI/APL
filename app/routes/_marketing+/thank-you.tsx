@@ -47,8 +47,8 @@ export default function ThankYou() {
 				<br /> Your registration is complete for APL PEI 2024!
 			</h1>
 			<p className="mt-5 text-lg sm:text-xl md:text-2xl lg:text-3xl">
-				Congratulations Bhulku {player.firstName} {player.lastName}, your registration
-				number is <b>{player.id}</b>.
+				Congratulations Bhulku {player.firstName} {player.lastName}, your
+				registration number is <b>{player.id}</b>.
 			</p>
 			<p className="text-lg sm:text-xl md:text-2xl lg:text-3xl">
 				An email will be sent to <b>{player.email}</b> with more information.
@@ -57,7 +57,7 @@ export default function ThankYou() {
 	)
 }
 
-function ConfirmationEmail({
+export function ConfirmationEmail({
 	firstName,
 	confNumber,
 }: {
