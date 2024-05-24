@@ -47,7 +47,7 @@ export default function ThankYou() {
 				<br /> Your registration is complete for APL PEI 2024!
 			</h1>
 			<p className="mt-5 text-lg sm:text-xl md:text-2xl lg:text-3xl">
-				Congratulations {player.firstName} {player.lastName}, your registration
+				Congratulations Bhulku {player.firstName} {player.lastName}, your registration
 				number is <b>{player.id}</b>.
 			</p>
 			<p className="text-lg sm:text-xl md:text-2xl lg:text-3xl">
