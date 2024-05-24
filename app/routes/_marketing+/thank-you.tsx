@@ -20,11 +20,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	if (!id) throw redirect('/registration')
 
 	const player = await prisma.player.findUnique({
-		select: { id: true, firstName: true, lastName: true, email: true },
+		select: {
+			id: true,
+			firstName: true,
+			lastName: true,
+			email: true,
+			paid: true,
+		},
 		where: { id },
 	})
 
 	if (!player) throw redirect('/registration')
+
+	if (!player.paid) {
+		await prisma.player.update({
+			where: { id },
+			data: { paid: true, paidAt: new Date() },
+		})
+	}
 
 	await sendEmail({
 		to: player.email,
