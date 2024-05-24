@@ -10,6 +10,7 @@ export default function Index() {
 
 	return (
 		<div className="mt-128 container flex h-full flex-1 flex-col place-items-center">
+			<img src="/public/img/logo.png" alt="APL PEI 2024" className="w-56" />
 			<h1 className="text-4xl font-bold">APL PEI 2024</h1>
 			{player ? (
 				<Button className="mt-4" asChild>

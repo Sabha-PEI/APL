@@ -40,8 +40,8 @@ export const links: LinksFunction = () => {
 	return [
 		// Preload svg sprite as a resource to avoid render blocking
 		{ rel: 'preload', href: iconsHref, as: 'image' },
+		{ rel: 'preload', href: '/public/img/logo.png', as: 'image' },
 		// Preload CSS as a resource to avoid render blocking
-		{ rel: 'mask-icon', href: '/favicons/mask-icon.svg' },
 		{
 			rel: 'alternate icon',
 			type: 'image/png',
@@ -53,8 +53,6 @@ export const links: LinksFunction = () => {
 			href: '/site.webmanifest',
 			crossOrigin: 'use-credentials',
 		} as const, // necessary to make typescript happy
-		//These should match the css preloads above to avoid css as render blocking resource
-		{ rel: 'icon', type: 'image/svg+xml', href: '/favicons/favicon.svg' },
 		{ rel: 'stylesheet', href: tailwindStyleSheetUrl },
 	].filter(Boolean)
 }
@@ -229,12 +227,15 @@ function App() {
 
 function Logo() {
 	return (
-		<Link to="/" className="group grid leading-snug">
-			<span className="font-light transition group-hover:-translate-x-1">
-				APL
-			</span>
-			<span className="font-bold transition group-hover:translate-x-1">
-				PEI
+		<Link to="/" className="group flex items-center gap-4">
+			<img src="/public/img/logo.png" alt="APL PEI 2024" className="w-14" />
+			<span className="grid leading-snug">
+				<span className="font-light transition group-hover:-translate-x-1">
+					APL
+				</span>
+				<span className="font-bold transition group-hover:translate-x-1">
+					PEI
+				</span>
 			</span>
 		</Link>
 	)
