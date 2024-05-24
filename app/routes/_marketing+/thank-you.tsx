@@ -69,7 +69,7 @@ function ConfirmationEmail({
 			<E.Container>
 				<h1>
 					<E.Text>
-						Your APL PEI 2024 registration is complete, {firstName}!
+						Bhulku {firstName}, your APL PEI 2024 registration is complete!
 					</E.Text>
 				</h1>
 				<p>
