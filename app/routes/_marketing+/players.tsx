@@ -29,13 +29,6 @@ export async function loader() {
 			bowlingComment: true,
 			fielderRating: true,
 			fielderComment: true,
-			paid: true,
-			paidAt: true,
-			team: {
-				select: {
-					name: true,
-				},
-			},
 		},
 	})
 
@@ -46,13 +39,13 @@ export default function Players() {
 	const { players } = useLoaderData<typeof loader>()
 
 	return (
-		<div className="container my-10 flex h-full flex-1 flex-col place-items-center gap-4">
+		<div className="my-10 flex h-full flex-1 flex-col place-items-center gap-4 px-16">
 			<h1 className="text-h4 sm:text-h3 md:text-h2 lg:text-h1">
 				Players registered
 			</h1>
-			<Table className="mt-5">
+			<Table className="mt-5 border">
 				<TableHeader>
-					<TableRow>
+					<TableRow className="divide-x">
 						<TableHead>First name</TableHead>
 						<TableHead>Last name</TableHead>
 						<TableHead>Address</TableHead>
@@ -70,14 +63,14 @@ export default function Players() {
 						<TableHead>Bowling comment</TableHead>
 						<TableHead>Fielding rating</TableHead>
 						<TableHead>Fielding comment</TableHead>
-						<TableHead>Paid</TableHead>
-						<TableHead>Paid at</TableHead>
-						<TableHead>Team</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					{players.map(player => (
-						<TableRow key={`${player.firstName}-${player.dob}`}>
+						<TableRow
+							key={`${player.firstName}-${player.dob}`}
+							className="divide-x"
+						>
 							<TableCell>{player.firstName}</TableCell>
 							<TableCell>{player.lastName}</TableCell>
 							<TableCell>{player.address}</TableCell>
@@ -95,9 +88,6 @@ export default function Players() {
 							<TableCell>{player.bowlingComment}</TableCell>
 							<TableCell>{player.fielderRating}</TableCell>
 							<TableCell>{player.fielderComment}</TableCell>
-							<TableCell>{player.paid ? 'Yes' : 'No'}</TableCell>
-							<TableCell>{player.paidAt}</TableCell>
-							<TableCell>{player.team?.name || 'No team'}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
