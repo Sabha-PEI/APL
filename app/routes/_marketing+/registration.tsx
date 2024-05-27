@@ -109,7 +109,8 @@ const RegistrationFormSchema = z.object({
 		.string({
 			required_error: 'Enter a comment.',
 		})
-		.min(15, 'Comment must be at least 15 characters.'),
+		.trim()
+		.min(5, 'Comment must be at least 5 characters.'),
 	bowlerRating: z.number().min(0).max(10),
 	armBowler: z.enum(['right-arm', 'left-arm'], {
 		required_error: 'Select an option',
@@ -121,13 +122,15 @@ const RegistrationFormSchema = z.object({
 		.string({
 			required_error: 'Enter a comment.',
 		})
-		.min(15, 'Comment must be at least 15 characters.'),
+		.trim()
+		.min(5, 'Comment must be at least 5 characters.'),
 	fielderRating: z.number().min(0).max(10),
 	fielderComment: z
 		.string({
 			required_error: 'Enter a comment.',
 		})
-		.min(15, 'Comment must be at least 15 characters.'),
+		.trim()
+		.min(5, 'Comment must be at least 5 characters.'),
 	image: ImageFieldsetSchema,
 })
 
