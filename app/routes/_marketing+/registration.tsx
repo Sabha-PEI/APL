@@ -234,10 +234,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		update: {
 			...submission.value,
 			image: {
-				create: {
-					blob: Buffer.from(await submission.value.image.file.arrayBuffer()),
-					contentType: submission.value.image.file.type,
-					altText: submission.value.image.altText,
+				update: {
+					where: {
+						id: submission.value.image.id,
+					},
+					data: {
+						blob: Buffer.from(await submission.value.image.file.arrayBuffer()),
+						contentType: submission.value.image.file.type,
+						altText: submission.value.image.altText,
+					},
 				},
 			},
 		},
@@ -353,7 +358,11 @@ export default function Registration() {
 								labelProps={{
 									children: 'Date of Birth',
 								}}
-								inputProps={getInputProps(fields.dob, { type: 'date' })}
+								inputProps={{
+									...getInputProps(fields.dob, { type: 'date' }),
+									max: new Date().toISOString().split('T')[0],
+									pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}',
+								}}
 								errors={fields.dob.errors}
 							/>
 						</div>
