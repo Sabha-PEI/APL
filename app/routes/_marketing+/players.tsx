@@ -41,11 +41,12 @@ export default function Players() {
 	return (
 		<div className="my-10 flex h-full flex-1 flex-col place-items-center gap-4 px-16">
 			<h1 className="text-h4 sm:text-h3 md:text-h2 lg:text-h1">
-				Players registered
+				{players.length} Players registered
 			</h1>
 			<Table className="mt-5 border">
 				<TableHeader>
 					<TableRow className="divide-x">
+						<TableHead></TableHead>
 						<TableHead>First name</TableHead>
 						<TableHead>Last name</TableHead>
 						<TableHead>Address</TableHead>
@@ -66,11 +67,12 @@ export default function Players() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{players.map(player => (
+					{players.map((player, index) => (
 						<TableRow
 							key={`${player.firstName}-${player.dob}`}
 							className="divide-x"
 						>
+							<TableCell>{++index}</TableCell>
 							<TableCell>{player.firstName}</TableCell>
 							<TableCell>{player.lastName}</TableCell>
 							<TableCell>{player.address}</TableCell>
