@@ -9,6 +9,10 @@ export function getPlayerImgSrc(imageId?: string | null) {
 	return imageId ? `/resources/player-images/${imageId}` : '/img/user.png'
 }
 
+export function getTeamImgSrc(imageId?: string | null) {
+	return imageId ? `/resources/team-images/${imageId}` : '/img/user.png'
+}
+
 export function getErrorMessage(error: unknown) {
 	if (typeof error === 'string') return error
 	if (

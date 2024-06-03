@@ -14,6 +14,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
+	useMatches,
 } from '@remix-run/react'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { Confetti } from './components/confetti.tsx'
@@ -174,6 +175,10 @@ function App() {
 	const data = useLoaderData<typeof loader>()
 	const nonce = useNonce()
 	const theme = useTheme()
+	const matches = useMatches()
+	const isOnAuctionPage = matches.find(m =>
+		m.pathname.match(/^\/admin\/auction(?:\/.*)?$/),
+	)
 	const allowIndexing = data.ENV.ALLOW_INDEXING !== 'false'
 	useToast(data.toast)
 
@@ -185,36 +190,60 @@ function App() {
 			env={data.ENV}
 		>
 			<div className="flex h-full min-h-screen flex-col justify-between">
-				<header className="container py-6">
-					<nav className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
-						<Logo />
-						<ul>
-							{data.player ? (
-								<li>
-									<NavLink
-										to="/admin"
-										className={({ isActive }) =>
-											isActive ? 'font-bold underline' : ''
-										}
-									>
-										Admin
-									</NavLink>
-								</li>
-							) : (
-								<li>
-									<NavLink
-										to="/registration"
-										className={({ isActive }) =>
-											isActive ? 'font-bold underline' : ''
-										}
-									>
-										Register
-									</NavLink>
-								</li>
-							)}
-						</ul>
-					</nav>
-				</header>
+				{isOnAuctionPage ? null : (
+					<header className="container py-6">
+						<nav className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
+							<Logo />
+							<ul className="flex gap-4">
+								{data.player ? (
+									<>
+										<li>
+											<NavLink
+												to="/admin"
+												className={({ isActive }) =>
+													isActive ? 'font-bold underline' : ''
+												}
+											>
+												Admin
+											</NavLink>
+										</li>
+										<li>
+											<NavLink
+												to="/admin/auction"
+												className={({ isActive }) =>
+													isActive ? 'font-bold underline' : ''
+												}
+											>
+												Auction
+											</NavLink>
+										</li>
+										<li>
+											<NavLink
+												to="/admin/teams"
+												className={({ isActive }) =>
+													isActive ? 'font-bold underline' : ''
+												}
+											>
+												Teams
+											</NavLink>
+										</li>
+									</>
+								) : (
+									<li>
+										<NavLink
+											to="/registration"
+											className={({ isActive }) =>
+												isActive ? 'font-bold underline' : ''
+											}
+										>
+											Register
+										</NavLink>
+									</li>
+								)}
+							</ul>
+						</nav>
+					</header>
+				)}
 
 				<Outlet />
 			</div>
