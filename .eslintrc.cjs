@@ -17,11 +17,11 @@ module.exports = {
 			{
 				prefer: 'type-imports',
 				disallowTypeAnnotations: true,
-				fixStyle: 'inline-type-imports',
+				fixStyle: 'separate-type-imports',
 			},
 		],
-		'import/no-duplicates': ['warn', { 'prefer-inline': true }],
-		'import/consistent-type-specifier-style': ['warn', 'prefer-inline'],
+		'import/no-duplicates': ['warn', { 'prefer-inline': false }],
+		'import/consistent-type-specifier-style': ['warn', 'prefer-top-level'],
 		'import/order': [
 			'warn',
 			{

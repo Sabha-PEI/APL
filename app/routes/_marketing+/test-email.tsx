@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs } from '@remix-run/node'
+import type {ActionFunctionArgs} from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'

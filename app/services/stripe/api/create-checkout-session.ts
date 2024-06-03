@@ -1,4 +1,4 @@
-import { type Stripe } from 'stripe'
+import type {Stripe} from 'stripe';
 import { stripe } from '#app/services/stripe/config.server'
 import { getDomainUrl } from '#app/utils/misc'
 import { redirectWithToast } from '../../../utils/toast.server'

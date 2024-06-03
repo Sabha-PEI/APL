@@ -1,5 +1,6 @@
 import * as E from '@react-email/components'
-import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
+import { redirect  } from '@remix-run/node'
+import type {LoaderFunctionArgs} from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '../../utils/db.server'
 import { sendEmail } from '../../utils/email.server'

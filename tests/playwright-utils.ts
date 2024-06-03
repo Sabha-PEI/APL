@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test'
-import { type Player as PlayerModel } from '@prisma/client'
+import type {Player as PlayerModel} from '@prisma/client';
 import * as setCookieParser from 'set-cookie-parser'
 import {
 	getPasswordHash,

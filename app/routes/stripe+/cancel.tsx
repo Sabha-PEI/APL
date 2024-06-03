@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs } from '@remix-run/node'
+import type {LoaderFunctionArgs} from '@remix-run/node';
 import { redirectWithToast } from '../../utils/toast.server'
 
 // redirect with toast for better UX

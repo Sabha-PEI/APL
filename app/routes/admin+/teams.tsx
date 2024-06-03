@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs, type SerializeFrom } from '@remix-run/node'
+import type {LoaderFunctionArgs, SerializeFrom} from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react'
 import { requirePlayerId } from '../../utils/auth.server'
 import { prisma } from '../../utils/db.server'

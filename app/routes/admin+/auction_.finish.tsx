@@ -1,4 +1,5 @@
-import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
+import { redirect  } from '@remix-run/node'
+import type {LoaderFunctionArgs} from '@remix-run/node';
 import { requirePlayerId } from '../../utils/auth.server'
 import { prisma } from '../../utils/db.server'
 

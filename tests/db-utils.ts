@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import { faker } from '@faker-js/faker'
-import { type Player, type PrismaClient } from '@prisma/client'
+import type {Player, PrismaClient} from '@prisma/client';
 import bcrypt from 'bcryptjs'
 import { UniqueEnforcer } from 'enforce-unique'
 

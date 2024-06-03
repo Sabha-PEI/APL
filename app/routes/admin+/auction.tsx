@@ -7,14 +7,15 @@ import {
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import {
-	json,
-	type ActionFunctionArgs,
-	type LoaderFunctionArgs,
+	json
+	
+	
 } from '@remix-run/node'
+import type {ActionFunctionArgs, LoaderFunctionArgs} from '@remix-run/node';
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useId } from 'react'
 import { z } from 'zod'
-import { type SelectProps } from '../../components/ui/select'
+import type {SelectProps} from '../../components/ui/select';
 import { requirePlayerId } from '../../utils/auth.server'
 import { redirectWithConfetti } from '../../utils/confetti.server'
 import { prisma } from '../../utils/db.server'

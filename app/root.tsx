@@ -1,10 +1,11 @@
 import {
-	json,
-	type LoaderFunctionArgs,
-	type HeadersFunction,
-	type LinksFunction,
-	type MetaFunction,
+	json
+	
+	
+	
+	
 } from '@remix-run/node'
+import type {LoaderFunctionArgs, HeadersFunction, LinksFunction, MetaFunction} from '@remix-run/node';
 import {
 	Link,
 	Links,
@@ -33,7 +34,8 @@ import { honeypot } from './utils/honeypot.server.ts'
 import { combineHeaders, getDomainUrl } from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
 import { useRequestInfo } from './utils/request-info.ts'
-import { type Theme, getTheme } from './utils/theme.server.ts'
+import {  getTheme } from './utils/theme.server.ts'
+import type {Theme} from './utils/theme.server.ts';
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
 

@@ -3,16 +3,12 @@ import {
 	useForm,
 	getInputProps,
 	getTextareaProps,
-	type FieldMetadata,
 	getFieldsetProps,
 } from '@conform-to/react'
+import type { FieldMetadata } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import {
-	json,
-	redirect,
-	type ActionFunctionArgs,
-	type LoaderFunctionArgs,
-} from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import {
 	Form,
 	useActionData,
