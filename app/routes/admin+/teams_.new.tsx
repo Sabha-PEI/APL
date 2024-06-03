@@ -1,16 +1,15 @@
 import {
-	
-	
 	unstable_createMemoryUploadHandler,
 	unstable_parseMultipartFormData,
-	redirect
+	redirect,
 } from '@remix-run/node'
-import type {LoaderFunctionArgs, ActionFunctionArgs} from '@remix-run/node';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
 import { Form } from '@remix-run/react'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { requirePlayerId } from '../../utils/auth.server'
 import { prisma } from '../../utils/db.server'
+import { MAX_UPLOAD_SIZE } from '../_marketing+/registration'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
@@ -20,7 +19,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
 	await requirePlayerId(request)
 	const uploadHandler = unstable_createMemoryUploadHandler({
-		maxPartSize: 500_000,
+		maxPartSize: MAX_UPLOAD_SIZE,
 	})
 
 	const formData = await unstable_parseMultipartFormData(request, uploadHandler)
@@ -36,6 +35,9 @@ export async function action({ request }: ActionFunctionArgs) {
 					blob: Buffer.from(await image.arrayBuffer()),
 				},
 			},
+		},
+		select: {
+			id: true,
 		},
 	})
 

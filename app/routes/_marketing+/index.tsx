@@ -22,30 +22,40 @@ export default function Index() {
 	const player = useOptionalPlayer()
 
 	return (
-		<div className="mt-128 container flex h-full flex-1 flex-col place-items-center">
-			<img src="/img/logo.png" alt="APL PEI 2024" className="w-56" />
-			<h1 className="text-4xl font-bold">APL PEI 2024</h1>
-			{player ? (
-				<Button className="mt-4" asChild>
+		<main className="container flex h-full flex-1 flex-col place-items-center pb-28">
+			<img
+				src="/img/logo.png"
+				alt="APL PEI 2024"
+				className="animate-slide-top w-56 [animation-fill-mode:backwards]"
+			/>
+			<h1 className="animate-slide-top text-4xl font-bold [animation-delay:0.3s] [animation-fill-mode:backwards]">
+				APL PEI 2024
+			</h1>
+			<Button
+				className="animate-slide-top mt-4 [animation-delay:0.6s] [animation-fill-mode:backwards]"
+				asChild
+			>
+				{player ? (
 					<Link to="/admin">Admin</Link>
-				</Button>
-			) : (
-				<Button className="mt-4" asChild>
+				) : (
 					<Link to="/registration">Register</Link>
-				</Button>
-			)}
-			<div className="mt-8 grid grid-cols-4">
-				{teams.map(team => (
-					<div key={team.name}>
+				)}
+			</Button>
+			<div className="mt-8 flex flex-wrap items-center justify-center gap-8">
+				{teams.map((team, index) => (
+					<div
+						key={team.name}
+						className="animate-roll-reveal rounded-3xl bg-accent text-center shadow-md duration-500 [animation-fill-mode:backwards] hover:-translate-y-3"
+						style={{ animationDelay: `${index * 0.14}s` }}
+					>
 						<img
 							src={getTeamImgSrc(team.imageId)}
 							alt={team.name}
-							className="w-24"
+							className="aspect-square size-96"
 						/>
-						<h2>{team.name}</h2>
 					</div>
 				))}
 			</div>
-		</div>
+		</main>
 	)
 }

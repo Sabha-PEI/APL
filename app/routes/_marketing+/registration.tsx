@@ -41,7 +41,7 @@ import {
 
 export const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
 
-const ImageFieldsetSchema = z.object({
+export const ImageFieldsetSchema = z.object({
 	id: z.string().optional(),
 	file: z
 		.instanceof(File, {
