@@ -165,23 +165,30 @@ export default function Auction() {
 							className="h-full w-full overflow-hidden rounded-3xl border-4 border-white"
 						/>
 					</div>
-					<div className="flex flex-col justify-between">
-						<p className="rounded-3xl bg-black p-6 text-center text-h2 ">
-							<GradientText>
-								<span>
-									{player.firstName} {player.lastName}
-								</span>
-							</GradientText>
-						</p>
-						<p className="rounded-3xl bg-black p-6 text-center text-h2">
-							<GradientText>{formatPhNo(player.phNo)}</GradientText>
-						</p>
-						<p className="break-words rounded-3xl bg-black p-6 text-center text-h2">
-							<GradientText>{player.email}</GradientText>
-						</p>
-						<p className="rounded-3xl bg-black p-6 text-center text-h2">
-							<GradientText>{player.address}</GradientText>
-						</p>
+					<div className="relative">
+						<img
+							src="/img/acc.png"
+							alt="ACC"
+							className="absolute inset-0 mx-auto aspect-auto h-full opacity-10"
+						/>
+						<div className="isolate flex h-full flex-col justify-between">
+							<p className="rounded-3xl bg-black p-6 text-center text-h2 ">
+								<GradientText>
+									<span>
+										{player.firstName} {player.lastName}
+									</span>
+								</GradientText>
+							</p>
+							<p className="rounded-3xl bg-black p-6 text-center text-h2">
+								<GradientText>{formatPhNo(player.phNo)}</GradientText>
+							</p>
+							<p className="break-words rounded-3xl bg-black p-6 text-center text-h2">
+								<GradientText>{player.email}</GradientText>
+							</p>
+							<p className="rounded-3xl bg-black p-6 text-center text-h2">
+								<GradientText>{player.address}</GradientText>
+							</p>
+						</div>
 					</div>
 				</div>
 				<div className="grid h-full grid-cols-3 grid-rows-1 gap-4">
