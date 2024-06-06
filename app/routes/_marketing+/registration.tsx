@@ -165,7 +165,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 				},
 			},
 		})
-		console.log({ player })
 		if (player) {
 			if (!player.paid || pay === 'canceled') {
 				return { player }
