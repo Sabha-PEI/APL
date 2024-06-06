@@ -1,4 +1,4 @@
-import type {HeadersFunction, LoaderFunctionArgs} from '@remix-run/node';
+import type { HeadersFunction, LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useLoaderData } from '@remix-run/react'
 import { Button } from '../../components/ui/button'
 import {
@@ -24,6 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
 	const players = await prisma.player.findMany({
 		select: {
+			id: true,
 			firstName: true,
 			lastName: true,
 			address: true,
@@ -74,6 +75,7 @@ export default function Index() {
 					<TableHeader>
 						<TableRow className="divide-x">
 							<TableHead></TableHead>
+							<TableHead>ID</TableHead>
 							<TableHead>Paid</TableHead>
 							<TableHead>Paid At</TableHead>
 							<TableHead>First name</TableHead>
@@ -102,6 +104,7 @@ export default function Index() {
 								className="divide-x"
 							>
 								<TableCell>{++index}</TableCell>
+								<TableCell>{player.id}</TableCell>
 								<TableCell>{player.paid ? 'Yes' : 'No'}</TableCell>
 								<TableCell>{player.paidAt}</TableCell>
 								<TableCell>{player.firstName}</TableCell>

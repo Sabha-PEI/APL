@@ -135,6 +135,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const id = url.searchParams.get('id')
 	const pay = url.searchParams.get('pay')
 	if (id && pay) {
+		console.log({ id })
 		const player = await prisma.player.findUnique({
 			where: { id },
 			select: {
@@ -164,11 +165,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 				},
 			},
 		})
+		console.log({ player })
 		if (player) {
-			if (player.paid) {
-				return redirect(`/thank-you?id=${id}`)
+			if (!player.paid || pay === 'canceled') {
+				return { player }
 			}
-			return { player }
+			return redirect(`/thank-you?id=${id}`)
 		}
 	}
 
