@@ -8,15 +8,15 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { json } from '@remix-run/node'
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { Form, Outlet, useActionData, useLoaderData } from '@remix-run/react'
 import { useId } from 'react'
 import { z } from 'zod'
-import type { SelectProps } from '../../components/ui/select'
-import { requirePlayerId } from '../../utils/auth.server'
-import { redirectWithConfetti } from '../../utils/confetti.server'
-import { prisma } from '../../utils/db.server'
-import { getPlayerImgSrc, useIsPending } from '../../utils/misc'
-import { redirectWithToast } from '../../utils/toast.server'
+import type { SelectProps } from '../../../components/ui/select'
+import { requirePlayerId } from '../../../utils/auth.server'
+import { redirectWithConfetti } from '../../../utils/confetti.server'
+import { prisma } from '../../../utils/db.server'
+import { cn, getPlayerImgSrc, useIsPending } from '../../../utils/misc'
+import { redirectWithToast } from '../../../utils/toast.server'
 
 const sellFormSchema = z.object({
 	id: z.string(),
@@ -39,6 +39,8 @@ const sellFormSchema = z.object({
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
+	const url = new URL(request.url)
+	const id = url.searchParams.get('id')
 
 	const playerIdsPromise = prisma.player.findMany({
 		where: { paid: true, type: 'player' },
@@ -51,19 +53,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const [playerIds, teams] = await Promise.all([playerIdsPromise, teamsPromise])
 
 	const randomPlayerId =
-		playerIds[Math.floor(Math.random() * playerIds.length)].id
+		id ?? playerIds[Math.floor(Math.random() * playerIds.length)].id
 
 	const randomPlayer = await prisma.player.findFirst({
-		where: { id: randomPlayerId },
+		where: { id: randomPlayerId, type: 'player', teamId: null },
 		select: {
 			id: true,
 			firstName: true,
 			lastName: true,
+			playingRole: true,
 			email: true,
 			phNo: true,
 			address: true,
 			batsmanRating: true,
+			handedBatsman: true,
 			bowlerRating: true,
+			armBowler: true,
+			typeBowler: true,
 			fielderRating: true,
 			imageId: true,
 		},
@@ -72,7 +78,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	if (!randomPlayer) {
 		return redirectWithConfetti('/admin/auction/finish')
 	}
-	console.log({ teams })
+
 	return {
 		player: randomPlayer,
 		teams,
@@ -112,7 +118,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	}
 
-	return redirectWithConfetti('/admin/auction')
+	return redirectWithConfetti(`/admin/auction/sold?id=${player.id}`)
 }
 
 export default function Auction() {
@@ -143,6 +149,7 @@ export default function Auction() {
 
 	return (
 		<main className="flex-1 bg-zinc-800">
+			<Outlet />
 			<div className="flex h-screen flex-col gap-24 p-6">
 				<div className="grid h-[60%] grid-cols-3 grid-rows-1 gap-4">
 					<div className="h-full w-full overflow-hidden rounded-3xl">
@@ -171,9 +178,18 @@ export default function Auction() {
 						<div className="isolate flex h-full flex-col justify-between">
 							<p className="rounded-3xl bg-black p-6 text-center text-h2 ">
 								<GradientText>
-									<span>
-										{player.firstName} {player.lastName}
-									</span>
+									{player.firstName} {player.lastName}
+								</GradientText>
+							</p>
+							<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+								<GradientText>{player.playingRole}</GradientText>
+							</p>
+							<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+								<GradientText>{player.handedBatsman} batsman</GradientText>
+							</p>
+							<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+								<GradientText>
+									{player.armBowler} {player.typeBowler} bowler
 								</GradientText>
 							</p>
 							<p className="rounded-3xl bg-black p-6 text-center text-h2">
@@ -290,7 +306,7 @@ export default function Auction() {
 const gradient = 'bg-gradient-to-r from-orange-600 to-yellow-200'
 function GradientText({ children }: { children: React.ReactNode }) {
 	return (
-		<span className={`${gradient} bg-clip-text text-transparent`}>
+		<span className={cn('bg-clip-text text-transparent', gradient)}>
 			{children}
 		</span>
 	)

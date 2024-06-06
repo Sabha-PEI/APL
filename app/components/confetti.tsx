@@ -14,6 +14,9 @@ export function Confetti({ id }: { id?: string | null }) {
 					numberOfPieces={500}
 					width={window.innerWidth}
 					height={window.innerHeight}
+					style={{
+						zIndex: 99999,
+					}}
 				/>
 			)}
 		</ClientOnly>
