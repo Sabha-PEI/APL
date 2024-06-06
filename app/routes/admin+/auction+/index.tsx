@@ -56,7 +56,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		id ?? playerIds[Math.floor(Math.random() * playerIds.length)].id
 
 	const randomPlayer = await prisma.player.findFirst({
-		where: { id: randomPlayerId, type: 'player', teamId: null },
+		where: {
+			id: randomPlayerId,
+			type: 'player',
+			teamId: id ? undefined : null,
+		},
 		select: {
 			id: true,
 			firstName: true,
@@ -72,6 +76,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			typeBowler: true,
 			fielderRating: true,
 			imageId: true,
+			teamId: true,
 		},
 	})
 
@@ -205,42 +210,44 @@ export default function Auction() {
 					</div>
 				</div>
 				<div className="grid h-full grid-cols-3 grid-rows-1 gap-4">
-					<Form
-						method="POST"
-						className="flex flex-col justify-between"
-						{...getFormProps(form)}
-					>
-						<input {...getInputProps(fields.id, { type: 'hidden' })} />
-						<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
-							<GradientText>
-								<input
-									{...getInputProps(fields.soldFor, {
-										type: 'text',
-									})}
-									className="ml-2 bg-transparent p-0 text-center focus:outline-none"
-									autoFocus
-								/>
-							</GradientText>
-						</p>
-						<SelectField
-							selectProps={{
-								...getInputProps(fields.teamId, { type: 'text' }),
-								options: teams.map(team => ({
-									value: team.id,
-									label: team.name,
-								})),
-								placeholder: 'Select team',
-							}}
-						/>
-						<button
-							type="submit"
-							className="rounded-3xl bg-black p-6 text-center text-h2 capitalize"
+					{player.teamId ? null : (
+						<Form
+							method="POST"
+							className="flex flex-col justify-between"
+							{...getFormProps(form)}
 						>
-							<span className="bg-gradient-to-r from-orange-600 to-yellow-200 bg-clip-text text-transparent">
-								{isPending ? 'Selling...' : 'Sell'}
-							</span>
-						</button>
-					</Form>
+							<input {...getInputProps(fields.id, { type: 'hidden' })} />
+							<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+								<GradientText>
+									<input
+										{...getInputProps(fields.soldFor, {
+											type: 'text',
+										})}
+										className="ml-2 bg-transparent p-0 text-center focus:outline-none"
+										autoFocus
+									/>
+								</GradientText>
+							</p>
+							<SelectField
+								selectProps={{
+									...getInputProps(fields.teamId, { type: 'text' }),
+									options: teams.map(team => ({
+										value: team.id,
+										label: team.name,
+									})),
+									placeholder: 'Select team',
+								}}
+							/>
+							<button
+								type="submit"
+								className="rounded-3xl bg-black p-6 text-center text-h2 capitalize"
+							>
+								<span className="bg-gradient-to-r from-orange-600 to-yellow-200 bg-clip-text text-transparent">
+									{isPending ? 'Selling...' : 'Sell'}
+								</span>
+							</button>
+						</Form>
+					)}
 					<div className="col-span-2 flex flex-col justify-between">
 						<div className="flex gap-4">
 							<img
