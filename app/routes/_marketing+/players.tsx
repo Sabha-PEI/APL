@@ -30,6 +30,9 @@ export async function loader() {
 			fielderRating: true,
 			fielderComment: true,
 		},
+		where: {
+			type: 'player',
+		},
 	})
 
 	return { players }
