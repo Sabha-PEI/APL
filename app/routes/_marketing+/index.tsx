@@ -26,13 +26,13 @@ export default function Index() {
 			<img
 				src="/img/logo.png"
 				alt="APL PEI 2024"
-				className="animate-slide-top w-56 [animation-fill-mode:backwards]"
+				className="w-56 animate-slide-top [animation-fill-mode:backwards]"
 			/>
 			<h1 className="animate-slide-top text-4xl font-bold [animation-delay:0.3s] [animation-fill-mode:backwards]">
 				APL PEI 2024
 			</h1>
 			<Button
-				className="animate-slide-top mt-4 [animation-delay:0.6s] [animation-fill-mode:backwards]"
+				className="mt-4 animate-slide-top [animation-delay:0.6s] [animation-fill-mode:backwards]"
 				asChild
 			>
 				{player ? (
