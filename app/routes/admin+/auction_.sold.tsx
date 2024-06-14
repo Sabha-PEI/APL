@@ -81,14 +81,13 @@ export default function Sold() {
 		</main>
 	)
 }
-
-function Team({
+export function Team({
 	team,
 	selectedPlayerId,
 	index,
 }: {
 	team: Awaited<ReturnType<typeof loader>>['teams'][number]
-	selectedPlayerId: string
+	selectedPlayerId?: string
 	index: number
 }) {
 	const players = team.players.filter(
@@ -140,7 +139,7 @@ function Team({
 	)
 }
 
-function Player({
+export function Player({
 	player,
 	selected,
 	index,
