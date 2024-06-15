@@ -181,29 +181,29 @@ export default function Auction() {
 							className="absolute inset-0 mx-auto aspect-auto h-full opacity-10"
 						/>
 						<div className="isolate flex h-full flex-col justify-between">
-							<p className="rounded-3xl bg-black p-6 text-center text-h2 ">
+							<p className="rounded-3xl bg-black p-6 text-center text-h4">
 								<GradientText>
 									{player.firstName} {player.lastName}
 								</GradientText>
 							</p>
-							<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+							<p className="rounded-3xl bg-black p-6 text-center text-h4 capitalize">
 								<GradientText>{player.playingRole}</GradientText>
 							</p>
-							<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+							<p className="rounded-3xl bg-black p-6 text-center text-h4 capitalize">
 								<GradientText>{player.handedBatsman} batsman</GradientText>
 							</p>
-							<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+							<p className="rounded-3xl bg-black p-6 text-center text-h4 capitalize">
 								<GradientText>
 									{player.armBowler} {player.typeBowler} bowler
 								</GradientText>
 							</p>
-							<p className="rounded-3xl bg-black p-6 text-center text-h2">
+							<p className="rounded-3xl bg-black p-6 text-center text-h4">
 								<GradientText>{formatPhNo(player.phNo)}</GradientText>
 							</p>
-							<p className="break-words rounded-3xl bg-black p-6 text-center text-h2">
+							<p className="break-words rounded-3xl bg-black p-6 text-center text-h4">
 								<GradientText>{player.email}</GradientText>
 							</p>
-							<p className="rounded-3xl bg-black p-6 text-center text-h2">
+							<p className="rounded-3xl bg-black p-6 text-center text-h4">
 								<GradientText>{player.address}</GradientText>
 							</p>
 						</div>
