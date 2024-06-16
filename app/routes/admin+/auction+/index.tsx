@@ -43,7 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const id = url.searchParams.get('id')
 
 	const playerIdsPromise = prisma.player.findMany({
-		where: { paid: true, type: 'player' },
+		where: { paid: true, type: 'player', teamId: null },
 		select: { id: true },
 	})
 	const teamsPromise = prisma.team.findMany({
@@ -51,6 +51,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	})
 
 	const [playerIds, teams] = await Promise.all([playerIdsPromise, teamsPromise])
+
+	if (playerIds.length === 0) {
+		return redirectWithConfetti('/admin/auction/finish')
+	}
 
 	const randomPlayerId =
 		id ?? playerIds[Math.floor(Math.random() * playerIds.length)].id
@@ -121,6 +125,15 @@ export async function action({ request }: ActionFunctionArgs) {
 			title: 'Player not sold',
 			description: 'Please try again.',
 		})
+	}
+
+	const playerIds = await prisma.player.findMany({
+		where: { paid: true, type: 'player', teamId: null },
+		select: { id: true },
+	})
+
+	if (playerIds.length === 0) {
+		return redirectWithConfetti('/admin/auction/finish')
 	}
 
 	return redirectWithConfetti(`/admin/auction/sold?id=${player.id}`)

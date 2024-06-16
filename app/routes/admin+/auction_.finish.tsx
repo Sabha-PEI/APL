@@ -9,7 +9,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
 
 	const playerIds = await prisma.player.findMany({
-		where: { paid: true, type: 'player' },
+		where: { paid: true, type: 'player', teamId: null },
 		select: { id: true },
 	})
 
