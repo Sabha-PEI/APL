@@ -84,4 +84,25 @@
 
 		--ring: 224.3 76.3% 48%;
 	}
+
+	.neu-button {
+		background-color: #1E1F21;
+		border-radius: 50px;
+		box-shadow: inset 4px 4px 10px #000000, inset -4px -4px 10px #3d3d3d;
+		color: #f8fafc;
+		cursor: pointer;
+		font-size: 18px;
+		padding: 15px 40px;
+		transition: all 0.2s ease-in-out;
+		border: 2px solid #6a6a6a;
+	}
+	
+	.neu-button:hover {
+		box-shadow: inset 2px 2px 5px #000000, inset -2px -2px 5px #3d3d3d, 2px 2px 5px #000000, -2px -2px 5px #3d3d3d;
+	}
+	
+	.neu-button:focus {
+		outline: none;
+		box-shadow: inset 2px 2px 5px #000000, inset -2px -2px 5px #3d3d3d, 2px 2px 5px #000000, -2px -2px 5px #3d3d3d;
+	}
 }

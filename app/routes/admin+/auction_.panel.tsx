@@ -16,7 +16,6 @@ import {
 } from '@remix-run/react'
 import { useCallback, useEffect, useId, useState } from 'react'
 import { z } from 'zod'
-import { Button } from '#app/components/ui/button'
 import type { SelectProps } from '#app/components/ui/select'
 import { getTeamsForOptions, sellPlayer } from '#app/services/backend/api'
 import { requirePlayerId } from '#app/utils/auth.server'
@@ -175,7 +174,7 @@ export default function AdminAuctionPanel() {
 							value={playerId}
 						/>
 						<div>{fields.id.errors}</div>
-						<p className="rounded-3xl bg-black p-6 text-center text-h2 capitalize">
+						<p className="neu-button rounded-3xl p-6 text-center text-h2 capitalize">
 							<input
 								{...getInputProps(fields.soldFor, {
 									type: 'text',
@@ -196,26 +195,22 @@ export default function AdminAuctionPanel() {
 							}}
 						/>
 						<div>{fields.teamId.errors}</div>
-						<button
-							type="submit"
-							className="rounded-3xl bg-black p-6 text-center text-h2 capitalize"
-							disabled={isPending}
-						>
+						<button type="submit" className="neu-button" disabled={isPending}>
 							<span>{isPending ? 'Selling...' : 'Sell'}</span>
 						</button>
 					</Form>
 				) : (
-					<div>
+					<div className="flex flex-col justify-between gap-6">
 						<p>No player found in the local storage</p>
-						<Button
+						<button
 							onClick={() => {
 								localStorage.setItem(CURRENT_PLAYER_ID_KEY, NEXT_PLAYER_VALUE)
 								localStorage.removeItem(CURRENT_TEAM_ID_KEY)
 							}}
-							className="mt-4"
+							className="neu-button"
 						>
 							Next Player
-						</Button>
+						</button>
 					</div>
 				)}
 			</div>
@@ -267,7 +262,7 @@ function SelectField({
 					input.blur()
 					selectProps.onBlur?.(event)
 				}}
-				className="rounded-3xl bg-black p-6 text-center text-h2"
+				className="neu-button rounded-3xl p-6 text-center text-h2"
 			>
 				<p>
 					<SelectPrimitive.Value placeholder={selectProps.placeholder} />

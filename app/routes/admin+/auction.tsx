@@ -75,94 +75,88 @@ export default function Auction() {
 
 	return (
 		<main className="flex-1 bg-[#1E1F21]">
-			<div className="grid h-screen grid-cols-3 gap-12 p-6">
-				<div className="grid grid-rows-6 gap-12">
-					<Card className="row-span-4 flex flex-col items-center justify-evenly gap-6 text-center">
-						<div
+			<div className="grid h-screen grid-cols-3 gap-8 p-6">
+				<Card className="flex flex-col items-center justify-evenly gap-6 text-center">
+					<div
+						style={{
+							backgroundImage: `url(${player.playerImageUrl})`,
+							backgroundSize: 'cover',
+							backgroundPosition: 'top',
+						}}
+						className="mx-auto aspect-square flex-grow overflow-hidden rounded-full"
+					/>
+					<div className="flex flex-col gap-2">
+						<p className="text-h3">{player.name}</p>
+						<p className="text-h6 text-gray-400">
+							{formatPhNo(player.phone.toString())}
+						</p>
+						<p className="text-h6 text-gray-400">{player.email}</p>
+					</div>
+				</Card>
+				<div className="col-span-2 grid grid-cols-3 gap-8">
+					<Card className="flex flex-col items-center gap-4">
+						{/* <div
 							style={{
-								backgroundImage: `url(${player.playerImageUrl})`,
-								backgroundSize: 'cover',
-								backgroundPosition: 'top',
+								backgroundImage: `url(/img/batting.png)`,
+								backgroundSize: 'contain',
+								backgroundRepeat: 'no-repeat',
+								backgroundPosition: 'center',
 							}}
-							className="mx-auto aspect-square flex-grow overflow-hidden rounded-full"
-						/>
-						<div className="flex flex-col gap-2">
-							<p className="text-h1">{player.name}</p>
-							<p className="text-h5 text-gray-400">
-								{formatPhNo(player.phone.toString())}
-							</p>
-							<p className="text-h5 text-gray-400">{player.email}</p>
-						</div>
+							className="flex-grow"
+						/> */}
+						<p className="mb-2 text-2xl font-bold">Batting Rating</p>
+						<CircularProgress value={player.battingRating} />
 					</Card>
-					<GradientCard
-						title="No of Matches"
-						value={player.noOfMatches.toString()}
-					/>
-					<GradientCard
-						title="No of Dismissal"
-						value={player.noOfDismissals.toString()}
-						direction="to-l"
-					/>
-				</div>
-				<div className="col-span-2 grid grid-rows-6 gap-12">
-					<div className="row-span-4 grid grid-cols-3 gap-8">
-						<Card className="flex flex-col gap-4">
-							<div
-								style={{
-									backgroundImage: `url(/img/batting.png)`,
-									backgroundSize: 'contain',
-									backgroundRepeat: 'no-repeat',
-									backgroundPosition: 'center',
-								}}
-								className="flex-grow"
-							/>
-							<CircularProgress value={player.battingRating} />
-						</Card>
-						<Card className="flex flex-col gap-4">
-							<div
-								style={{
-									backgroundImage: `url(/img/bowling.png)`,
-									backgroundSize: 'contain',
-									backgroundRepeat: 'no-repeat',
-									backgroundPosition: 'center',
-								}}
-								className="flex-grow"
-							/>
-							<CircularProgress value={player.bowlingRating} />
-						</Card>
-						<Card className="flex flex-col gap-4">
-							<div
-								style={{
-									backgroundImage: `url(/img/fielding.png)`,
-									backgroundSize: 'contain',
-									backgroundRepeat: 'no-repeat',
-									backgroundPosition: 'center',
-								}}
-								className="flex-grow"
-							/>
-							<CircularProgress value={player.fieldingRating} />
-						</Card>
-					</div>
-					<div className="row-span-2 grid grid-cols-2 gap-12">
-						<GradientCard
-							direction="to-l"
-							title="No of Runs"
-							value={player.noOfRuns.toString()}
-						/>
-						<GradientCard
-							title="Strike Rate"
-							value={player.strikeRate.toString()}
-						/>
-						<GradientCard
-							title="No of Catches"
-							value={player.noOfCatches.toString()}
-						/>
-						<GradientCard
-							direction="to-l"
-							title="No of Wickets"
-							value={player.noOfWickets.toString()}
-						/>
-					</div>
+					<Card className="flex flex-col items-center gap-4">
+						{/* <div
+							style={{
+								backgroundImage: `url(/img/bowling.png)`,
+								backgroundSize: 'contain',
+								backgroundRepeat: 'no-repeat',
+								backgroundPosition: 'center',
+							}}
+							className="flex-grow"
+						/> */}
+						<p className="mb-2 text-2xl font-bold">Bowling Rating</p>
+						<CircularProgress value={player.bowlingRating} />
+					</Card>
+					<Card className="flex flex-col items-center gap-4">
+						{/* <div
+							style={{
+								backgroundImage: `url(/img/fielding.png)`,
+								backgroundSize: 'contain',
+								backgroundRepeat: 'no-repeat',
+								backgroundPosition: 'center',
+							}}
+							className="flex-grow"
+						/> */}
+						<p className="mb-2 text-2xl font-bold">Fielding Rating</p>
+						<CircularProgress value={player.fieldingRating} />
+					</Card>
+					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+						<p>No of Matches</p>
+						<p>{player.noOfMatches}</p>
+					</Card>
+					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+						<p>No of Runs</p>
+						<p>{player.noOfRuns}</p>
+					</Card>
+					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+						<p>Strike Rate</p>
+						<p>{player.strikeRate}</p>
+					</Card>
+					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+						<p>No of Dismissal</p>
+						<p>{player.noOfDismissals}</p>
+					</Card>
+					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+						<p>No of Catches</p>
+						<p>{player.noOfCatches}</p>
+					</Card>
+					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+						<p>No of Wickets</p>
+						<p>{player.noOfWickets}</p>
+					</Card>
 				</div>
 			</div>
 		</main>
@@ -178,35 +172,9 @@ function Card({
 }) {
 	return (
 		<div
-			className={cn('overflow-hidden rounded-3xl bg-[#2B2F35] p-6', className)}
+			className={cn('neu-button overflow-hidden rounded-3xl p-4', className)}
 		>
 			{children}
-		</div>
-	)
-}
-
-function GradientCard({
-	title,
-	value,
-	direction = 'to-r',
-	className,
-}: {
-	title: string
-	value: string
-	direction?: 'to-r' | 'to-l'
-	className?: string
-}) {
-	return (
-		<div
-			className={cn(
-				'flex flex-col items-center justify-center gap-6 rounded-3xl bg-gradient-to-r p-6 text-center text-5xl font-bold',
-				direction === 'to-r' && 'from-[#F4AA61] via-[#E75E7F] to-[#C05FF4]',
-				direction === 'to-l' && 'from-[#C05FF4] via-[#E75E7F] to-[#F4AA61]',
-				className,
-			)}
-		>
-			<p>{title}</p>
-			<p>{value}</p>
 		</div>
 	)
 }

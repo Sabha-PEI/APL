@@ -9,8 +9,8 @@ interface CircularProgressProps {
 
 export function CircularProgress({
 	value = 9,
-	size = 320,
-	strokeWidth = 32,
+	size = 140,
+	strokeWidth = 16,
 	className = '',
 }: CircularProgressProps) {
 	const [animatedPercentage, setAnimatedPercentage] = useState(0)
@@ -75,7 +75,7 @@ export function CircularProgress({
 				</svg>
 
 				<div className="absolute inset-0 flex items-center justify-center">
-					<span className="text-7xl font-bold text-white">{value}</span>
+					<span className="text-4xl font-bold text-white">{value}</span>
 				</div>
 			</div>
 		</div>
