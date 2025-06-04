@@ -2,13 +2,15 @@ import { redirect } from '@remix-run/node'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData, useNavigate } from '@remix-run/react'
 import { useCallback, useEffect } from 'react'
+import { Confetti } from '#app/components/confetti'
 import { getPlayerById, getTeamById } from '#app/services/backend/api'
 import type {
 	Team as TeamType,
 	Player as PlayerType,
 } from '#app/services/backend/types'
 import { requirePlayerId } from '#app/utils/auth.server'
-import { cn } from '#app/utils/misc'
+import { cn, tryCatch } from '#app/utils/misc'
+import { redirectWithToast } from '#app/utils/toast.server'
 import { CURRENT_PLAYER_ID_KEY, NEXT_PLAYER_VALUE } from './auction_.panel'
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -18,17 +20,26 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const id = url.searchParams.get('id')
 	const teamId = url.searchParams.get('teamId')
 	if (!id || !teamId) {
-		console.log('no id or teamId', id, teamId)
 		throw redirect('/admin/auction')
 	}
 
-	const playerPromise = getPlayerById(id)
-	const teamPromise = getTeamById(teamId)
+	const { data: player, error: playerError } = await tryCatch(getPlayerById(id))
+	if (playerError) {
+		console.log('auction.sold.loader playerError', playerError)
+		throw redirectWithToast('/admin/auction', {
+			description: `Error fetching player with id ${id}`,
+			type: 'error',
+		})
+	}
 
-	const [player, team] = await Promise.all([playerPromise, teamPromise])
-
-	console.log('player', player)
-	console.log('team', team)
+	const { data: team, error: teamError } = await tryCatch(getTeamById(teamId))
+	if (teamError) {
+		console.log('auction.sold.loader teamError', teamError)
+		throw redirectWithToast('/admin/auction', {
+			description: `Error fetching team with id ${teamId}`,
+			type: 'error',
+		})
+	}
 
 	return {
 		player,
@@ -39,7 +50,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Sold() {
 	const { player, team } = useLoaderData<typeof loader>()
 	const navigate = useNavigate()
-	// TODO: Add confetti if possible
 
 	const handleStorageChange = useCallback(() => {
 		const currentPlayerId = localStorage.getItem(CURRENT_PLAYER_ID_KEY)
@@ -57,19 +67,22 @@ export default function Sold() {
 	}, [handleStorageChange])
 
 	return (
-		<main className="container flex flex-1 flex-col items-center justify-center py-20">
-			<h1 className="animate-slide-top text-4xl font-bold [animation-fill-mode:backwards]">
-				Bhulku {player.name} sold!
-			</h1>
-			<p className="mt-2 animate-slide-top text-3xl [animation-delay:0.2s] [animation-fill-mode:backwards]">
-				Bhulku {player.name} sold for{' '}
-				<span className="underline">${player.playerSoldAmount}</span> to{' '}
-				<span className="underline">{team.teamName}</span>.
-			</p>
-			<div className="mt-8 flex h-full items-center justify-center gap-8">
-				<Team team={team} selectedPlayerId={player.id.toString()} index={0} />
-			</div>
-		</main>
+		<>
+			<Confetti id={player.id.toString()} />
+			<main className="container flex flex-1 flex-col items-center justify-center py-20">
+				<h1 className="animate-slide-top text-4xl font-bold [animation-fill-mode:backwards]">
+					Bhulku {player.name} sold!
+				</h1>
+				<p className="mt-2 animate-slide-top text-3xl [animation-delay:0.2s] [animation-fill-mode:backwards]">
+					Bhulku {player.name} sold for{' '}
+					<span className="underline">${player.playerSoldAmount}</span> to{' '}
+					<span className="underline">{team.teamName}</span>.
+				</p>
+				<div className="mt-8 flex h-full items-center justify-center gap-8">
+					<Team team={team} selectedPlayerId={player.id.toString()} index={0} />
+				</div>
+			</main>
+		</>
 	)
 }
 export function Team({

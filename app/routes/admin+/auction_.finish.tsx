@@ -3,18 +3,36 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { getAllTeams, getRandomPlayer } from '#app/services/backend/api'
 import { requirePlayerId } from '#app/utils/auth.server'
+import { tryCatch } from '#app/utils/misc'
+import { redirectWithToast } from '#app/utils/toast.server'
 import { Team } from './auction_.sold'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
 
-	const randomPlayer = await getRandomPlayer()
+	const { data: randomPlayer, error: randomPlayerError } =
+		await tryCatch(getRandomPlayer())
+
+	if (randomPlayerError) {
+		console.log('auction.finish.loader randomPlayerError', randomPlayerError)
+		throw redirectWithToast('/admin/auction', {
+			description: 'Error fetching random player',
+			type: 'error',
+		})
+	}
 
 	if (randomPlayer) {
 		return redirect('/admin/auction')
 	}
 
-	const teams = await getAllTeams()
+	const { data: teams, error: teamsError } = await tryCatch(getAllTeams())
+	if (teamsError) {
+		console.log('auction.finish.loader teamsError', teamsError)
+		throw redirectWithToast('/admin/auction', {
+			description: 'Error fetching all teams',
+			type: 'error',
+		})
+	}
 
 	return { teams }
 }

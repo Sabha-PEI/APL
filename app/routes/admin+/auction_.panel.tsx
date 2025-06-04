@@ -49,7 +49,15 @@ const sellFormSchema = z.object({
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
 
-	const teams = await getTeamsForOptions()
+	const { data: teams, error: teamsError } =
+		await tryCatch(getTeamsForOptions())
+	if (teamsError) {
+		console.log('auction.panel.loader teamsError', teamsError)
+		throw redirectWithToast('/admin/auction/panel', {
+			description: 'Error fetching teams for options',
+			type: 'error',
+		})
+	}
 
 	return { teams }
 }
@@ -80,6 +88,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	)
 
 	if (sellError || !updatedPlayer) {
+		console.log('auction.panel.action sellError', sellError)
 		return redirectWithToast('/admin/auction/panel', {
 			title: 'Failed to sell player',
 			description: getErrorMessage(sellError),

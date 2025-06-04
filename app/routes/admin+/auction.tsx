@@ -5,7 +5,8 @@ import { CircularProgress } from '#app/components/circular-progress'
 import { getPlayerById, getRandomPlayer } from '#app/services/backend/api'
 import { requirePlayerId } from '#app/utils/auth.server'
 import { redirectWithConfetti } from '#app/utils/confetti.server'
-import { cn } from '#app/utils/misc'
+import { cn, tryCatch } from '#app/utils/misc'
+import { redirectWithToast } from '#app/utils/toast.server'
 import { CURRENT_PLAYER_ID_KEY, CURRENT_TEAM_ID_KEY } from './auction_.panel'
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -15,13 +16,33 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const id = url.searchParams.get('id')
 
 	if (id) {
-		const player = await getPlayerById(id)
+		const { data: player, error: getPlayerByIdError } = await tryCatch(
+			getPlayerById(id),
+		)
+		if (getPlayerByIdError) {
+			console.log('auction.loader getPlayerByIdError', getPlayerByIdError)
+			throw redirectWithToast('/admin/auction', {
+				description: `Player with id ${id} not found`,
+				type: 'error',
+			})
+		}
 		return { player }
 	}
 
-	const randomPlayer = await getRandomPlayer()
+	const { data: randomPlayer, error: randomPlayerError } =
+		await tryCatch(getRandomPlayer())
 
-	if (!randomPlayer) {
+	if (randomPlayerError) {
+		console.log('auction.loader randomPlayerError', randomPlayerError)
+		throw redirectWithToast('/admin/auction', {
+			description: 'Error fetching random player',
+			type: 'error',
+		})
+	}
+	if (
+		randomPlayer.id === 0 ||
+		randomPlayer.name === 'No unsold players available'
+	) {
 		return redirectWithConfetti('/admin/auction/finish')
 	}
 
