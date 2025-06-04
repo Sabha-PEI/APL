@@ -53,6 +53,9 @@ export const extendedTheme = {
 		md: 'calc(var(--radius) - 2px)',
 		sm: 'calc(var(--radius) - 4px)',
 	},
+	fontFamily: {
+		sans: ['Poppins', 'sans-serif'],
+	},
 	fontSize: {
 		// 1rem = 16px
 		/** 80px size / 84px high / bold */

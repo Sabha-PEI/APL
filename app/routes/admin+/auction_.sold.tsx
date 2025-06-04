@@ -1,83 +1,74 @@
 import { redirect } from '@remix-run/node'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Link, useLoaderData } from '@remix-run/react'
-import { Button } from '../../components/ui/button'
-import { requirePlayerId } from '../../utils/auth.server'
-import { prisma } from '../../utils/db.server'
-import { cn, getTeamImgSrc } from '../../utils/misc'
+import { useLoaderData, useNavigate } from '@remix-run/react'
+import { useCallback, useEffect } from 'react'
+import { getPlayerById, getTeamById } from '#app/services/backend/api'
+import type {
+	Team as TeamType,
+	Player as PlayerType,
+} from '#app/services/backend/types'
+import { requirePlayerId } from '#app/utils/auth.server'
+import { cn } from '#app/utils/misc'
+import { CURRENT_PLAYER_ID_KEY, NEXT_PLAYER_VALUE } from './auction_.panel'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
+
 	const url = new URL(request.url)
 	const id = url.searchParams.get('id')
-	if (!id) {
+	const teamId = url.searchParams.get('teamId')
+	if (!id || !teamId) {
+		console.log('no id or teamId', id, teamId)
 		throw redirect('/admin/auction')
 	}
 
-	const teamsPromise = prisma.team.findMany({
-		select: {
-			name: true,
-			players: {
-				select: {
-					id: true,
-					firstName: true,
-					lastName: true,
-					type: true,
-				},
-			},
-			imageId: true,
-		},
-	})
-	const playerPromise = prisma.player.findUnique({
-		where: { id },
-		select: {
-			id: true,
-			firstName: true,
-			lastName: true,
-			soldFor: true,
-			team: {
-				select: { name: true },
-			},
-		},
-	})
+	const playerPromise = getPlayerById(id)
+	const teamPromise = getTeamById(teamId)
 
-	const [teams, player] = await Promise.all([teamsPromise, playerPromise])
-	if (!player) {
-		throw redirect('/admin/auction')
-	}
+	const [player, team] = await Promise.all([playerPromise, teamPromise])
+
+	console.log('player', player)
+	console.log('team', team)
 
 	return {
-		teams,
 		player,
+		team,
 	}
 }
 
 export default function Sold() {
-	const { teams, player } = useLoaderData<typeof loader>()
+	const { player, team } = useLoaderData<typeof loader>()
+	const navigate = useNavigate()
+	// TODO: Add confetti if possible
+
+	const handleStorageChange = useCallback(() => {
+		const currentPlayerId = localStorage.getItem(CURRENT_PLAYER_ID_KEY)
+		if (currentPlayerId === NEXT_PLAYER_VALUE) {
+			navigate('/admin/auction')
+		}
+	}, [navigate])
+
+	useEffect(() => {
+		window.addEventListener('storage', handleStorageChange)
+
+		return () => {
+			window.removeEventListener('storage', handleStorageChange)
+		}
+	}, [handleStorageChange])
 
 	return (
 		<main className="container flex flex-1 flex-col items-center justify-center py-20">
 			<h1 className="animate-slide-top text-4xl font-bold [animation-fill-mode:backwards]">
-				Bhulku {player.firstName} {player.lastName} sold!
+				Bhulku {player.name} sold!
 			</h1>
 			<p className="mt-2 animate-slide-top text-3xl [animation-delay:0.2s] [animation-fill-mode:backwards]">
-				Bhulku {player.firstName} {player.lastName} sold for{' '}
-				<span className="underline">${player.soldFor}</span> to{' '}
-				<span className="underline">{player.team?.name}</span>.
+				Bhulku {player.name} sold for{' '}
+				<span className="underline">${player.playerSoldAmount}</span> to{' '}
+				<span className="underline">{team.teamName}</span>.
 			</p>
-			<div className="mt-8 grid h-full grid-cols-3 items-center justify-center gap-8">
-				{teams.map((team, index) => (
-					<Team
-						key={team.name}
-						team={team}
-						index={index}
-						selectedPlayerId={player.id}
-					/>
-				))}
+			<div className="mt-8 flex h-full items-center justify-center gap-8">
+				<Team team={team} selectedPlayerId={player.id.toString()} index={0} />
 			</div>
-			<Button className="mt-5" asChild>
-				<Link to="/admin/auction">Next Player</Link>
-			</Button>
 		</main>
 	)
 }
@@ -86,19 +77,20 @@ export function Team({
 	selectedPlayerId,
 	index,
 }: {
-	team: Awaited<ReturnType<typeof loader>>['teams'][number]
+	team: TeamType
 	selectedPlayerId?: string
 	index: number
 }) {
 	const players = team.players.filter(
-		player => player.type === 'player' && player.id !== selectedPlayerId,
+		player =>
+			player.typeof === 'player' && player.id.toString() !== selectedPlayerId,
 	)
 	const selectedPlayer = team.players.find(
-		player => player.id === selectedPlayerId,
+		player => player.id.toString() === selectedPlayerId,
 	)
-	const captain = team.players.find(player => player.type === 'captain')
+	const captain = team.players.find(player => player.typeof === 'captain')
 	const viceCaptain = team.players.find(
-		player => player.type === 'vice captain',
+		player => player.typeof === 'vice-captain',
 	)
 	if (!captain || !viceCaptain) {
 		throw new Error('No captain or vice captain found for this team')
@@ -111,14 +103,24 @@ export function Team({
 				style={{ animationDelay: `${index * 0.14}s` }}
 			>
 				<img
-					src={getTeamImgSrc(team.imageId)}
-					alt={team.name}
+					src={team.teamImageUrl}
+					alt={team.teamName}
 					className="aspect-square size-96"
 				/>
 			</div>
 			<div className="mt-5 flex w-full flex-col divide-y px-4">
-				<Player player={captain} index={0} selected={false} />
-				<Player player={viceCaptain} index={1} selected={false} />
+				<Player
+					player={captain}
+					index={0}
+					selected={false}
+					className="font-bold"
+				/>
+				<Player
+					player={viceCaptain}
+					index={1}
+					selected={false}
+					className="font-bold"
+				/>
 				{players.map((player, index) => (
 					<Player
 						key={player.id}
@@ -143,27 +145,28 @@ export function Player({
 	player,
 	selected,
 	index,
+	className,
 }: {
-	player: Awaited<ReturnType<typeof loader>>['teams'][number]['players'][number]
+	player: PlayerType
 	selected: boolean
 	index: number
+	className?: string
 }) {
-	const playerIndex = player.type === 'player' && index - 1
+	const playerIndex = player.typeof === 'player' && index - 1
 
 	return (
 		<div
 			className={cn(
 				'flex animate-slide-top justify-between border-muted-foreground p-2 [animation-delay:0.2s] [animation-fill-mode:backwards]',
 				selected && 'rounded-xl bg-muted-foreground text-accent',
+				className,
 			)}
 			style={{ animationDelay: `${index * 0.14}s` }}
 		>
 			<p className="capitalize">
-				{player.type} {playerIndex}
+				{player.typeof} {playerIndex}
 			</p>
-			<h3>
-				{player.firstName} {player.lastName}
-			</h3>
+			<h3>{player.name}</h3>
 		</div>
 	)
 }

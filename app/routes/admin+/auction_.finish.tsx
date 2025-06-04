@@ -1,36 +1,20 @@
 import { redirect } from '@remix-run/node'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { requirePlayerId } from '../../utils/auth.server'
-import { prisma } from '../../utils/db.server'
+import { getAllTeams, getRandomPlayer } from '#app/services/backend/api'
+import { requirePlayerId } from '#app/utils/auth.server'
 import { Team } from './auction_.sold'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requirePlayerId(request)
 
-	const playerIds = await prisma.player.findMany({
-		where: { paid: true, type: 'player', teamId: null },
-		select: { id: true },
-	})
+	const randomPlayer = await getRandomPlayer()
 
-	if (playerIds.length !== 0) {
+	if (randomPlayer) {
 		return redirect('/admin/auction')
 	}
 
-	const teams = await prisma.team.findMany({
-		select: {
-			name: true,
-			players: {
-				select: {
-					id: true,
-					firstName: true,
-					lastName: true,
-					type: true,
-				},
-			},
-			imageId: true,
-		},
-	})
+	const teams = await getAllTeams()
 
 	return { teams }
 }
@@ -43,7 +27,7 @@ export default function AuctionFinish() {
 			<h1 className="text-4xl font-bold">All players have been sold!</h1>
 			<div className="mt-8 grid h-full grid-cols-3 items-center justify-center gap-8">
 				{teams.map((team, index) => (
-					<Team key={team.name} team={team} index={index} />
+					<Team key={team.id} team={team} index={index} />
 				))}
 			</div>
 		</main>
