@@ -134,11 +134,11 @@ export default function Auction() {
 						<CircularProgress value={player.fieldingRating} />
 					</Card>
 					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
-						<p>No of Matches</p>
+						<p>Matches</p>
 						<p>{player.noOfMatches}</p>
 					</Card>
 					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
-						<p>No of Runs</p>
+						<p>Runs</p>
 						<p>{player.noOfRuns}</p>
 					</Card>
 					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
@@ -146,15 +146,15 @@ export default function Auction() {
 						<p>{player.strikeRate}</p>
 					</Card>
 					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
-						<p>No of Dismissal</p>
+						<p>Dismissal</p>
 						<p>{player.noOfDismissals}</p>
 					</Card>
 					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
-						<p>No of Catches</p>
+						<p>Catches</p>
 						<p>{player.noOfCatches}</p>
 					</Card>
 					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
-						<p>No of Wickets</p>
+						<p>Wickets</p>
 						<p>{player.noOfWickets}</p>
 					</Card>
 				</div>
