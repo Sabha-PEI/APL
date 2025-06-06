@@ -94,66 +94,39 @@ export default function Auction() {
 					</div>
 				</Card>
 				<div className="col-span-2 grid grid-cols-3 gap-8">
-					<Card className="flex flex-col items-center gap-4">
-						{/* <div
-							style={{
-								backgroundImage: `url(/img/batting.png)`,
-								backgroundSize: 'contain',
-								backgroundRepeat: 'no-repeat',
-								backgroundPosition: 'center',
-							}}
-							className="flex-grow"
-						/> */}
+					<Card className="flex flex-col items-center justify-center gap-4">
 						<p className="mb-2 text-2xl font-bold">Batting Rating</p>
 						<CircularProgress value={player.battingRating} />
 					</Card>
-					<Card className="flex flex-col items-center gap-4">
-						{/* <div
-							style={{
-								backgroundImage: `url(/img/bowling.png)`,
-								backgroundSize: 'contain',
-								backgroundRepeat: 'no-repeat',
-								backgroundPosition: 'center',
-							}}
-							className="flex-grow"
-						/> */}
+					<Card className="flex flex-col items-center justify-center gap-4">
 						<p className="mb-2 text-2xl font-bold">Bowling Rating</p>
 						<CircularProgress value={player.bowlingRating} />
 					</Card>
-					<Card className="flex flex-col items-center gap-4">
-						{/* <div
-							style={{
-								backgroundImage: `url(/img/fielding.png)`,
-								backgroundSize: 'contain',
-								backgroundRepeat: 'no-repeat',
-								backgroundPosition: 'center',
-							}}
-							className="flex-grow"
-						/> */}
+					<Card className="flex flex-col items-center justify-center gap-4">
 						<p className="mb-2 text-2xl font-bold">Fielding Rating</p>
 						<CircularProgress value={player.fieldingRating} />
 					</Card>
-					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+					<Card className="flex flex-col items-center justify-center gap-2 text-3xl font-bold">
 						<p>Matches</p>
 						<p>{player.noOfMatches}</p>
 					</Card>
-					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+					<Card className="flex flex-col items-center justify-center gap-2 text-3xl font-bold">
 						<p>Runs</p>
 						<p>{player.noOfRuns}</p>
 					</Card>
-					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+					<Card className="flex flex-col items-center justify-center gap-2 text-3xl font-bold">
 						<p>Strike Rate</p>
 						<p>{player.strikeRate}</p>
 					</Card>
-					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+					<Card className="flex flex-col items-center justify-center gap-2 text-3xl font-bold">
 						<p>Dismissal</p>
 						<p>{player.noOfDismissals}</p>
 					</Card>
-					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+					<Card className="flex flex-col items-center justify-center gap-2 text-3xl font-bold">
 						<p>Catches</p>
 						<p>{player.noOfCatches}</p>
 					</Card>
-					<Card className="flex flex-col items-center justify-center gap-2 text-2xl font-bold">
+					<Card className="flex flex-col items-center justify-center gap-2 text-3xl font-bold">
 						<p>Wickets</p>
 						<p>{player.noOfWickets}</p>
 					</Card>
@@ -172,7 +145,7 @@ function Card({
 }) {
 	return (
 		<div
-			className={cn('neu-button overflow-hidden rounded-3xl p-4', className)}
+			className={cn('neu-button overflow-hidden rounded-3xl p-2', className)}
 		>
 			{children}
 		</div>
