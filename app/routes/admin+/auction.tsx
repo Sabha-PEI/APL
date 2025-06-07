@@ -39,10 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			type: 'error',
 		})
 	}
-	if (
-		randomPlayer.id === 0 ||
-		randomPlayer.name === 'No unsold players available'
-	) {
+	if (!randomPlayer) {
 		return redirectWithConfetti('/admin/auction/finish')
 	}
 

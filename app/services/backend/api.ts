@@ -3,10 +3,13 @@ import type { Player, Team } from './types'
 const API_URL =
 	'https://aplpei2025-b4bdfzfwgthadsf5.canadacentral-01.azurewebsites.net'
 
-export async function getRandomPlayer(): Promise<Player> {
+export async function getRandomPlayer(): Promise<Player | null> {
 	const response = await fetch(`${API_URL}/players/random`)
 	const data = await response.json()
-	return data as unknown as Player
+	const player = data as unknown as Player
+	if (player.id !== 0 && player.name !== 'No unsold players available')
+		return player
+	return null
 }
 
 export async function getTeamsForOptions(): Promise<
